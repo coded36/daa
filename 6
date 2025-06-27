@@ -1,33 +1,107 @@
-package firstprogram;
+1.package exam;
+
+
 
 import java.util.Scanner;
 
-public class WarshallsAlgorithm {
+public class DepthFirstSearchGraph {
+    private int numVertices;
+    private int[][] graphMatrix;
+
+    public DepthFirstSearchGraph(int numVertices) {
+        this.numVertices = numVertices;
+        graphMatrix = new int[numVertices][numVertices];
+    }
+
+    public void addEdge(int source, int destination) {
+        graphMatrix[source][destination] = 1;
+        graphMatrix[destination][source] = 1; // because it's an undirected graph
+    }
+
+    public void dfsTraversal(int currentVertex, boolean[] isVisited) {
+        System.out.print(currentVertex + " ");
+        isVisited[currentVertex] = true;
+
+        for (int i = 0; i < numVertices; i++) {
+            if (graphMatrix[currentVertex][i] == 1 && !isVisited[i]) {
+                dfsTraversal(i, isVisited);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices in the graph: ");
+        int totalVertices = input.nextInt();
+
+        DepthFirstSearchGraph graph = new DepthFirstSearchGraph(totalVertices);
+
+        System.out.println("Enter the adjacency matrix (0 = no edge, 1 = edge):");
+        for (int i = 0; i < totalVertices; i++) {
+            for (int j = 0; j < totalVertices; j++) {
+                graph.graphMatrix[i][j] = input.nextInt();
+            }
+        }
+
+        System.out.print("Enter the starting vertex for DFS: ");
+        int startVertex = input.nextInt();
+
+        boolean[] visitedNodes = new boolean[totalVertices];
+        System.out.print("DFS traversal starting from vertex " + startVertex + ": ");
+        graph.dfsTraversal(startVertex, visitedNodes);
+
+        input.close();
+    }
+}
+
+
+2.
+package exam;
+import java.util.Scanner;
+
+public class FloydAlgo {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+       
         System.out.print("Enter the number of vertices: ");
         int vertices = scanner.nextInt();
+
+      
         int[][] graph = new int[vertices][vertices];
-        System.out.println("Enter the adjacency matrix (0 for no edge, 1 for edge):");
+
+        
+        System.out.println("Enter the weight matrix (use 99999 for infinity):");
         for (int i = 0; i < vertices; i++) {
             for (int j = 0; j < vertices; j++) {
                 graph[i][j] = scanner.nextInt();
             }
         }
+
+        
         for (int k = 0; k < vertices; k++) {
             for (int i = 0; i < vertices; i++) {
                 for (int j = 0; j < vertices; j++) {
-                    graph[i][j] = graph[i][j] | (graph[i][k] & graph[k][j]);
+                    if (graph[i][k] != 99999 && graph[k][j] != 99999) {
+                        graph[i][j] = Math.min(graph[i][j], graph[i][k] + graph[k][j]);
+                    }
                 }
             }
         }
-        System.out.println("Transitive Closure:");
+
+      
+        System.out.println("Shortest Path Matrix:");
         for (int i = 0; i < vertices; i++) {
             for (int j = 0; j < vertices; j++) {
-                System.out.print(graph[i][j] + " ");
+                if (graph[i][j] == 99999)
+                    System.out.print("INF ");
+                else
+                    System.out.print(graph[i][j] + " ");
             }
             System.out.println();
         }
+
         scanner.close();
     }
 }
