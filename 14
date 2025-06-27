@@ -1,0 +1,79 @@
+import java.util.*;
+
+public class NQueensAllSolutions {
+
+    // Solve the N-Queens problem
+    static void solve(int[][] board, int col, int n, List<int[][]> solutions) {
+        if (col == n) {
+            // Deep copy of board to store the current solution
+            int[][] solution = new int[n][n];
+            for (int i = 0; i < n; i++) {
+                solution[i] = board[i].clone();
+            }
+            solutions.add(solution);
+            return;
+        }
+
+        for (int row = 0; row < n; row++) {
+            if (isSafe(board, row, col, n)) {
+                board[row][col] = 1; // place queen
+                solve(board, col + 1, n, solutions); // move to next column
+                board[row][col] = 0; // backtrack
+            }
+        }
+    }
+
+    // Check if it's safe to place a queen at (row, col)
+    static boolean isSafe(int[][] board, int row, int col, int n) {
+        // Check left in the row
+        for (int i = 0; i < col; i++) {
+            if (board[row][i] == 1)
+                return false;
+        }
+
+        // Check upper-left diagonal
+        for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        // Check lower-left diagonal
+        for (int i = row, j = col; i < n && j >= 0; i++, j--) {
+            if (board[i][j] == 1)
+                return false;
+        }
+
+        return true;
+    }
+
+    // Print the board with Q for queen and . for empty cell
+    static void printBoard(int[][] board, int n) {
+        for (int[] row : board) {
+            for (int cell : row) {
+                System.out.print(cell == 1 ? "Q " : ". ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    // Main function
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter N: ");
+        int n = sc.nextInt();
+
+        int[][] board = new int[n][n];
+        List<int[][]> solutions = new ArrayList<>();
+
+        solve(board, 0, n, solutions);
+
+        System.out.println("\nTotal valid solutions: " + solutions.size());
+        for (int i = 0; i < solutions.size(); i++) {
+            System.out.println("Solution #" + (i + 1) + ":");
+            printBoard(solutions.get(i), n);
+        }
+
+        sc.close();
+    }
+}
