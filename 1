@@ -1,61 +1,77 @@
-package firstprogram;
-import java.util.Scanner;
+package exam;
+
 import java.util.Random;
-public class mergesort{
-public static void mergeSort(int[] a, int low, int high) {
-int N = high - low;
-if (N <= 1)
-return;
-int mid = low + (N / 2);
-mergeSort(a, low, mid);
-mergeSort(a, mid, high);
-int[] temp = new int[N];
-int i = low, j = mid;
-for (int k = 0; k < N; k++) {
-if (i == mid)
-temp[k] = a[j++];
-else if (j == high)
-temp[k] = a[i++];
-else if (a[j] < a[i])
-temp[k] = a[j++];
-else
-temp[k] = a[i++];
+import java.util.Scanner;
+
+public class MergeSortExp {
+
+    public static void mergeSort(int[] arr, int low, int high) {
+        if (high - low <= 1) 
+        	return;
+
+        int mid = (low + high) / 2;
+        mergeSort(arr, low, mid);
+        mergeSort(arr, mid, high);
+        merge(arr, low, mid, high);
+    }
+
+    public static void merge(int[] arr, int low, int mid, int high) {
+        int[] temp = new int[high - low];
+        int i = low, j = mid, k = 0;
+
+        while (i < mid && j < high) {
+            if (arr[i] <= arr[j])
+                temp[k++] = arr[i++];
+            else
+                temp[k++] = arr[j++];
+        }
+
+        while (i < mid) temp[k++] = arr[i++];
+        while (j < high) temp[k++] = arr[j++];
+
+        for (i = 0; i < temp.length; i++)
+            arr[low + i] = temp[i];
+    }
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+        Random rand = new Random();
+
+        System.out.print("Enter number of elements to sort: ");
+        int n = scan.nextInt();
+
+        System.out.print("Enter number of times to run the sort: ");
+        int runs = scan.nextInt();
+
+        double totalTime = 0;
+
+        for (int r = 0; r < runs; r++) {
+            int[] arr = new int[n];
+
+            System.out.println("\nUnsorted array for Run " + (r + 1) + ":");
+            for (int i = 0; i < n; i++) {
+                arr[i] = rand.nextInt(1000);
+                System.out.print(arr[i] + " ");
+            }
+
+            long startTime = System.nanoTime();
+            mergeSort(arr, 0, n);
+            long endTime = System.nanoTime();
+
+            double durationMs = (endTime - startTime) / 1_000_000.0;
+            totalTime += durationMs;
+
+            System.out.println("\nSorted array for Run " + (r + 1) + ":");
+            for (int num : arr) System.out.print(num + " ");
+
+            System.out.printf("\nTime taken for Run %d: %.3f ms\n", (r + 1), durationMs);
+        }
+
+        double avgTime = totalTime / runs;
+        System.out.printf("\nAverage Time Taken over %d runs: %.3f ms\n", runs, avgTime);
+
+        scan.close();
+    }
 }
-for (int k = 0; k < N; k++)
-a[low++] = temp[k];
-}
-public static void main(String[] args) {
-Scanner scan = new Scanner(System.in);
-int i;
-Random r = new Random();
-System.out.println("Merge Sort\nEnter the Number of times the algorithm should Run");
-int times = scan.nextInt();
-double totaldur = 0;
-for (int j = 0; j < times; j++) {
-System.out.println("Random Number Generated are at POS " + j + " as follows : ");
-int[] a = new int[10];
-for (i = 0; i < 10; i++) {
-a[i] = r.nextInt(1000);
-System.out.print(a[i] + " ");
-}
-System.out.println("");
-long StartTime = System.nanoTime();
-mergeSort(a, 0, 10);
-double EndTime = System.nanoTime();
-double duration = (EndTime - StartTime);
-System.out.println("Elements after Sorting are");
-for (i = 0; i < 10; i++)
-System.out.print(a[i] + " ");
-System.out.println("");
-totaldur = totaldur + duration;
-}
-System.out.println("\nTotal time taken to Sort is :" + totaldur + " Nano Seconds");
-double miliseconds = (totaldur / 1000000);
-System.out.println("\nTotal time taken to Sort is :" + miliseconds + "Mili Seconds");
-double avg = totaldur / times;
-System.out.println("The Average time Spend by the System is : " + avg + "Nano Second");
-double miliavg = (avg / 1000000);
-System.out.println("The Avergae time Spend by the System is : " + miliavg + "Mili Seconds");
-scan.close();
-}
-}
+
+
