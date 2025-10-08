@@ -1,59 +1,86 @@
 import java.util.Scanner;
-public class kruskal {
-int parent[]=new int[10];
-int find(int m){
-int p=m;
-while(parent[p]!=0)
-p=parent[p];
-return p;
-}
-void union(int i,int j)
-{
-if(i<j)
-parent[i]=j;
-else
-parent[j]=i;
-}
-void krkl(int[][]a, int n)
-{
-int u=0,v=0,min,k=0,i,j,sum=0;
-while(k<n-1)
-{
-min=99;
-for(i=1;i<=n;i++)
-for(j=1;j<=n;j++)
-if(a[i][j]<min&&i!=j)
-{
-min=a[i][j];
-u=i;
-v=j;
-}
-i=find(u);
-j=find(v);
-if(i!=j)
-{
-union(i,j);
-System.out.println("("+u+","+v+")"+"="+a[u][v]);
-sum=sum+a[u][v];
-k++;
-}
-a[u][v]=a[v][u]=99;
-}
-System.out.println("The cost of minimum spanning tree = "+sum);
-}
-public static void main(String[] args) {
-int a[][]=new int[10][10];
-int i,j;
-System.out.println("Enter the number of vertices of the graph");
-Scanner sc=new Scanner(System.in);
-int n;
-n=sc.nextInt();
-System.out.println("Enter the wieghted matrix");
-for(i=1;i<=n;i++)
-for(j=1;j<=n;j++)
-a[i][j]=sc.nextInt();
-kruskal k=new kruskal();
-k.krkl(a,n);
-sc.close();
-}
+
+public class Krushal {
+    private int[] parent;
+
+    // Constructor to initialize parent array
+    public Krushal(int numVertices) {
+        parent = new int[numVertices + 1]; // 1-based indexing
+    }
+
+    // Find the root of a vertex
+    private int findRoot(int vertex) {
+        while (parent[vertex] != 0) {
+            vertex = parent[vertex];
+        }
+        return vertex;
+    }
+
+    // Join two sets
+    private void joinSets(int root1, int root2) {
+        if (root1 < root2) {
+            parent[root1] = root2;
+        } else {
+            parent[root2] = root1;
+        }
+    }
+
+    // Krushal's algorithm to find Minimum Spanning Tree
+    public void findMST(int[][] graph, int numVertices) {
+        int edgesAdded = 0;
+        int totalCost = 0;
+
+        while (edgesAdded < numVertices - 1) {
+            int smallestWeight = Integer.MAX_VALUE;
+            int vertex1 = -1, int vertex2 = -1;
+
+            // Find the edge with the smallest weight
+            for (int i = 1; i <= numVertices; i++) {
+                for (int j = 1; j <= numVertices; j++) {
+                    if (graph[i][j] < smallestWeight && i != j) {
+                        smallestWeight = graph[i][j];
+                        vertex1 = i;
+                        vertex2 = j;
+                    }
+                }
+            }
+
+            int root1 = findRoot(vertex1);
+            int root2 = findRoot(vertex2);
+
+            // Include this edge if it doesn't form a cycle
+            if (root1 != root2) {
+                joinSets(root1, root2);
+                System.out.println("Edge included: (" + vertex1 + "," + vertex2 + ") = " + smallestWeight);
+                totalCost += smallestWeight;
+                edgesAdded++;
+            }
+
+            // Mark edge as used
+            graph[vertex1][vertex2] = graph[vertex2][vertex1] = Integer.MAX_VALUE;
+        }
+
+        System.out.println("Total cost of Minimum Spanning Tree = " + totalCost);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter number of vertices: ");
+        int numVertices = scanner.nextInt();
+
+        int[][] graph = new int[numVertices + 1][numVertices + 1]; // 1-based indexing
+
+        System.out.println("Enter the weighted adjacency matrix:");
+        for (int i = 1; i <= numVertices; i++) {
+            for (int j = 1; j <= numVertices; j++) {
+                graph[i][j] = scanner.nextInt();
+            }
+        }
+
+        Krushal krushal = new Krushal(numVertices);
+        krushal.findMST(graph, numVertices);
+
+        scanner.close();
+    }
 }
